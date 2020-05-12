@@ -5,8 +5,11 @@ import uuid from 'react-uuid'
 export default function App() {
   const id = uuid();
 
+  // Xác định đang ở màu nào
   const [index, setIndex] = useState(id);
+  // Xét màu mặc định
   const [color, setColor] = useState('white');
+  // Object chứa data theo định dạng: id, color, prev(object chứa màu trước đó), next(object chứa màu sau đó)
   const [objColor, setObjColor] = useState({
     id: id,
     color: 'white',
@@ -14,10 +17,13 @@ export default function App() {
 
   const onPressRed = () => {
     let objCol = objColor;
+
+    // Tìm màu hiện tại
     while (objCol.next && objCol.id !== index) {
       objCol = objCol.next;
     }
 
+    // Gán màu kế tiếp
     const id = uuid();
     objCol.next = {
       id,
@@ -67,9 +73,13 @@ export default function App() {
     let currentObj = {
       ...objColor
     };
+
+    // Tìm màu hiện tại
     while (currentObj.next && currentObj.id !== index) {
       currentObj = currentObj.next;
     }
+
+    //Tìm màu trước đó
     if (currentObj.prev) {
       let prevObj = {
         ...objColor
@@ -86,9 +96,13 @@ export default function App() {
     let currentObj = {
       ...objColor
     };
+
+    // Tìm màu hiện tại
     while (currentObj.next && currentObj.id !== index) {
       currentObj = currentObj.next;
     }
+
+    // Tìm và gán màu phía sau
     if (currentObj.next) {
       let nextObj = currentObj.next;
       setIndex(nextObj.id);
