@@ -1,38 +1,101 @@
 import React, {useState} from 'react';
 import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
+import uuid from 'react-uuid'
 
 export default function App() {
-  const [index, setIndex] = useState(0);
-  const [colors, setColors] = useState(['white']);
+  const id = uuid();
+
+  const [index, setIndex] = useState(id);
   const [color, setColor] = useState('white');
+  const [objColor, setObjColor] = useState({
+    id: id,
+    color: 'white',
+  })
 
   const onPressRed = () => {
-    setColor(colors.push('red'));
-    setIndex(index + 1);
-    console.log(index);
+    let objCol = objColor;
+    while (objCol.next && objCol.id !== index) {
+      objCol = objCol.next;
+    }
+
+    const id = uuid();
+    objCol.next = {
+      id,
+      prev: index,
+      color: 'red'
+    }
+
+    setIndex(id);
     setColor('red');
   }
 
   const onPressGreen = () => {
-    setColor(colors.push('green'));
-    setIndex(index + 1);
-    console.log(index);
+    let objCol = objColor;
+    while (objCol.next && objCol.id !== index) {
+      objCol = objCol.next;
+    }
+
+    const id = uuid();
+    objCol.next = {
+      id,
+      prev: index,
+      color: 'green'
+    }
+
+    setIndex(id);
     setColor('green');
   }
 
   const onPressBlue = () => {
-    setColor(colors.push('blue'));
-    setIndex(index + 1);
-    console.log(index);
+    let objCol = objColor;
+    while (objCol.next && objCol.id !== index) {
+      objCol = objCol.next;
+    }
+
+    const id = uuid();
+    objCol.next = {
+      id,
+      prev: index,
+      color: 'blue'
+    }
+
+    setIndex(id);
     setColor('blue');
   }
 
   const onPressUndo = () => {
-    console.log(colors);
-    setIndex(index - 2);
-    console.log(index);
-    setColor(colors[index]);
+    let currentObj = {
+      ...objColor
+    };
+    while (currentObj.next && currentObj.id !== index) {
+      currentObj = currentObj.next;
+    }
+    if (currentObj.prev) {
+      let prevObj = {
+        ...objColor
+      };
+      while (prevObj.next && prevObj.id !== currentObj.prev) {
+        prevObj = prevObj.next;
+      }
+      setIndex(prevObj.id);
+      setColor(prevObj.color);
+    }
   }
+
+  const onPressRedo = () => {
+    let currentObj = {
+      ...objColor
+    };
+    while (currentObj.next && currentObj.id !== index) {
+      currentObj = currentObj.next;
+    }
+    if (currentObj.next) {
+      let nextObj = currentObj.next;
+      setIndex(nextObj.id);
+      setColor(nextObj.color);
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.buttons}>
@@ -52,7 +115,7 @@ export default function App() {
           <Text style={{...styles.text, backgroundColor: 'white', borderWidth: 2, borderColor: 'black'}}>Undo</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={onPressRedo}>
           <Text style={{...styles.text, backgroundColor: 'white', borderWidth: 2, borderColor: 'black', }}>Redo</Text>
         </TouchableOpacity>
       </View>
@@ -72,7 +135,7 @@ const styles = StyleSheet.create({
   },
   buttons: {
     display: 'flex',
-    flexDirection:'row',
+    flexDirection: 'row',
     justifyContent: "flex-start",
   },
   text: {
